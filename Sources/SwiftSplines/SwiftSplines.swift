@@ -13,11 +13,12 @@ public struct Spline<P: DataPoint> {
         case smooth
         case circular
     }
-    
-    private let boundary: BoundaryCondition
-    private let controlPoints: [P.Scalar]
-    private let coefficients: [CubicPoly]
-
+        
+    /// Create a cubic piece wise spline based on the provided input
+    /// - Parameters:
+    ///   - values: The control values the spline will intercept
+    ///   - arguments: optionally, the arguments at the control points t_0 .. t_n can be supplied, by default they are 0 ... n
+    ///   - boundaryCondition: the chosen `BoundaryCondition`
     public init(
         values: [P],
         arguments: [P.Scalar]? = nil,
@@ -56,7 +57,10 @@ public struct Spline<P: DataPoint> {
         self.coefficients = Self.computeCoefficients(from: values, d: derivatives)
         self.boundary = boundaryCondition
     }
-
+    
+    /// Calculates the interpolation at a given argument
+    /// - Parameter t: the argument provided
+    /// - Returns: The interpolation calculated by finding the cubic spline segment and then calculating the cubic function of scaled t
     public func f(t: P.Scalar) -> P {
         guard t > controlPoints[0] else {
             // extend constant function to the left
@@ -103,6 +107,10 @@ public struct Spline<P: DataPoint> {
         return coefficients[index].f(t: lambda)
     }
     
+    private let boundary: BoundaryCondition
+    private let controlPoints: [P.Scalar]
+    private let coefficients: [CubicPoly]
+
     private var length: P.Scalar {
         guard let first = controlPoints.first, let last = controlPoints.last else {
             return 0
