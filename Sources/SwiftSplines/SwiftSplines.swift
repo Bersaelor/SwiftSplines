@@ -15,18 +15,25 @@ public struct Spline<P: DataPoint> {
     }
     
     private let boundary: BoundaryCondition
-    private let controlPoints: [(t: P.Scalar, p: P)]
+    private let controlPoints: [P.Scalar]
     private let coefficients: [CubicPoly]
 
     public init(
-        points: [P],
+        values: [P],
+        arguments: [P.Scalar]? = nil,
         boundaryCondition: BoundaryCondition = .smooth
     ) {
-        let controlPoints = points.enumerated().map({ (offset, element) in
-            return (P.Scalar(offset), element)
-        })
-        let derivatives = Self.computeDerivatives(from: points)
-        self.init(points: controlPoints, derivatives: derivatives, boundaryCondition: boundaryCondition)
+        if let arguments = arguments, arguments.count != values.count {
+            fatalError("Length of values and arguments arrays don't match, \(values.count) != \(arguments.count)")
+        }
+        
+        let args = arguments ?? values.enumerated().map({ P.Scalar($0.0) })
+        self.init(
+            values: values,
+            arguments: args,
+            derivatives: Self.computeDerivatives(from: values),
+            boundaryCondition: boundaryCondition
+        )
     }
     
     /// In cases where y(t_n) and the derivative y'(t_n) is known for all points
@@ -34,60 +41,65 @@ public struct Spline<P: DataPoint> {
     /// - Parameter points: the control points
     /// - Parameter derivatives: f'(t) at the control points
     public init(
-        points: [(t: P.Scalar, p: P)],
+        values: [P],
+        arguments: [P.Scalar],
         derivatives: [P],
         boundaryCondition: BoundaryCondition = .smooth
     ) {
-        guard points.count == derivatives.count else {
+        guard values.count == derivatives.count && values.count == arguments.count else {
             fatalError("The number of control points needs to be equal lentgh to the number of derivatives")
         }
-        guard points.count >= 2 else {
+        guard values.count >= 2 else {
             fatalError("Can't create piece wise spline with less then 2 control points")
         }
-        self.controlPoints = points
-        self.coefficients = Self.computeCoefficients(
-            from: self.controlPoints.map({ $0.p }),
-            d: derivatives
-        )
+        self.controlPoints = arguments
+        self.coefficients = Self.computeCoefficients(from: values, d: derivatives)
         self.boundary = boundaryCondition
     }
 
     public func f(t: P.Scalar) -> P {
-        guard t > controlPoints[0].t else {
+        guard t > controlPoints[0] else {
             // extend constant function to the left
             switch boundary {
             case .circular:
-                let negative = controlPoints[0].t - t
+                let negative = controlPoints[0] - t
                 let factor = ceil(-negative/length)
                 let tNew = t + factor * length
                 return f(t: tNew)
             case .fixedTangentials(let dAtStart, _):
-                let negative = controlPoints[0].t - t
-                return controlPoints[0].p + (negative * dAtStart)
+                let negative = controlPoints[0] - t
+                return coefficients[0].a + (negative * dAtStart)
             case .smooth:
-                return controlPoints[0].p
+                let negative = controlPoints[0] - t
+                return coefficients[0].f(t: negative)
             }
         }
 
-        guard let last = controlPoints.last else { return controlPoints[0].p }
-        guard t < last.t else {
+        guard let last = controlPoints.last else { return coefficients[0].a }
+        guard t < last else {
             // extend constant function to the right
             // extend constant function to the left
             switch boundary {
             case .circular:
-                let positive = t - last.t
+                let positive = t - last
                 let factor = ceil(positive/length)
                 let tNew = t - factor * length
                 return f(t: tNew)
             case .fixedTangentials(_, let dAtEnd):
-                let positive = t - last.t
-                return last.p + positive * dAtEnd
+                let positive = t - last
+                return coefficients[0].a + positive * dAtEnd
             case .smooth:
-                return last.p
+                let positive = t - last + 1
+                return coefficients[controlPoints.count-2].f(t: positive)
             }
         }
-        let index = controlPoints.firstIndex(where: { $0.t < t })!
-        let lambda = (t - controlPoints[index].t)/(controlPoints[index.advanced(by: 1)].t - controlPoints[index].t)
+        // find t_n where t_n <= t < t_n+1
+        let index = controlPoints.enumerated().first(where: { (offset, element) -> Bool in
+            return element <= t && t < controlPoints[offset+1]
+            })!.offset
+        let lambda = (t - controlPoints[index])
+            / (controlPoints[index.advanced(by: 1)] - controlPoints[index])
+
         return coefficients[index].f(t: lambda)
     }
     
@@ -95,7 +107,7 @@ public struct Spline<P: DataPoint> {
         guard let first = controlPoints.first, let last = controlPoints.last else {
             return 0
         }
-        return last.t - first.t
+        return last - first
     }
     
     struct CubicPoly {
