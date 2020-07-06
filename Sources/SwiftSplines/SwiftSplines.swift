@@ -52,7 +52,6 @@ public struct Spline<P: DataPoint> {
         self.boundary = boundaryCondition
     }
 
-    
     public func f(t: P.Scalar) -> P {
         guard t > controlPoints[0].t else {
             // extend constant function to the left
