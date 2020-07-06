@@ -1,10 +1,27 @@
 
 import Foundation
 
+public protocol DoubleConvertable {
+    var asDouble: Double { get }
+    init(_ double: Double)
+}
+
+extension Float: DoubleConvertable {
+    public var asDouble: Double {
+        return Double(self)
+    }
+}
+
+extension Double: DoubleConvertable {
+    public var asDouble: Double {
+        return self
+    }
+}
+
 public protocol DataPoint {
-    associatedtype Scalar: SIMDScalar & FloatingPoint
+    associatedtype Scalar: SIMDScalar & FloatingPoint & DoubleConvertable
     
-    var scalarCount: Int { get }
+    static var scalarCount: Int { get }
     subscript(index: Int) -> Self.Scalar { get set }
     
     static func * (left: Self.Scalar, right: Self) -> Self
@@ -17,10 +34,9 @@ extension DataPoint {
     }
 }
 
-
 extension FloatingPoint {
     
-    public var scalarCount: Int { return 1 }
+    public static var scalarCount: Int { return 1 }
 
     public subscript(index: Int) -> Self {
         get {
