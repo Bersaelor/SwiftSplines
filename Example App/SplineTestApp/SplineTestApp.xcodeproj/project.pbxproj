@@ -3,10 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		71CF7DE724B4D33600214932 /* SwiftSplines in Frameworks */ = {isa = PBXBuildFile; productRef = 71CF7DE624B4D33600214932 /* SwiftSplines */; };
 		71F7194A24B4A17700544076 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71F7194924B4A17700544076 /* AppDelegate.swift */; };
 		71F7194C24B4A17700544076 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71F7194B24B4A17700544076 /* SceneDelegate.swift */; };
 		71F7194E24B4A17700544076 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71F7194D24B4A17700544076 /* MasterViewController.swift */; };
@@ -19,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		712B783724B4D2BC005F6FBA /* SwiftSplines */ = {isa = PBXFileReference; lastKnownFileType = folder; name = SwiftSplines; path = ../..; sourceTree = "<group>"; };
 		71F7194624B4A17700544076 /* SplineTestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SplineTestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		71F7194924B4A17700544076 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		71F7194B24B4A17700544076 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -37,17 +39,27 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				71CF7DE724B4D33600214932 /* SwiftSplines in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		712B780A24B4D296005F6FBA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				712B783724B4D2BC005F6FBA /* SwiftSplines */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		71F7193D24B4A17700544076 = {
 			isa = PBXGroup;
 			children = (
 				71F7194824B4A17700544076 /* SplineTestApp */,
 				71F7194724B4A17700544076 /* Products */,
+				712B780A24B4D296005F6FBA /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -92,6 +104,9 @@
 			dependencies = (
 			);
 			name = SplineTestApp;
+			packageProductDependencies = (
+				71CF7DE624B4D33600214932 /* SwiftSplines */,
+			);
 			productName = SplineTestApp;
 			productReference = 71F7194624B4A17700544076 /* SplineTestApp.app */;
 			productType = "com.apple.product-type.application";
@@ -350,6 +365,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		71CF7DE624B4D33600214932 /* SwiftSplines */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SwiftSplines;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 71F7193E24B4A17700544076 /* Project object */;
 }

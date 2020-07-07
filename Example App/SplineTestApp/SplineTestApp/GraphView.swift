@@ -21,7 +21,9 @@ class GraphView: UIView {
         }
     }
     
-    var points: [(String, CGPoint)] = [] {
+    var points: [(String, CGPoint)] = []
+    
+    var linePoints: [CGPoint] = [] {
         didSet { setNeedsDisplay() }
     }
     
@@ -43,6 +45,17 @@ class GraphView: UIView {
         draw(axis: axis, in: context, size: size)
         
         draw(points: points, in: context, size: size)
+
+        let cooSize = CGSize(
+            width: size.width - 2 * border,
+            height: size.height - 2 * border
+        )
+        let scaledPoints = linePoints.map {
+            return CGPoint(
+                x: border + $0.x * cooSize.width,
+                y: border + $0.y * cooSize.height)
+        }
+        drawLine(points: scaledPoints, in: context)
     }
     
     private var border: CGFloat {
@@ -113,8 +126,22 @@ class GraphView: UIView {
             (point.0 as NSString).draw(
                 at: CGPoint(x: origin.x + 2, y: origin.y + 2),
                 withAttributes: textAttributes)
-
         }
+    }
+    
+    func drawLine(points: [CGPoint], in context: CGContext) {
+        guard !points.isEmpty else { return }
+
+        let lineColor = UIColor.systemTeal
+        lineColor.setStroke()
+
+        context.move(to: points[0])
+        
+        for point in points.dropFirst() {
+            context.addLine(to: point)
+        }
+        context.setLineWidth(1.0)
+        context.strokePath()
     }
 
 }

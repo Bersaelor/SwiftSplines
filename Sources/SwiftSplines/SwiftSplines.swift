@@ -74,8 +74,9 @@ public struct Spline<P: DataPoint> {
                 let negative = controlPoints[0] - t
                 return coefficients[0].a + (negative * dAtStart)
             case .smooth:
-                let negative = controlPoints[0] - t
-                return coefficients[0].f(t: negative)
+                let len0 = (controlPoints[1] - controlPoints[0])
+                let lambda = (t - controlPoints[0]) / len0
+                return coefficients[0].f(t: lambda)
             }
         }
 
@@ -93,8 +94,10 @@ public struct Spline<P: DataPoint> {
                 let positive = t - last
                 return coefficients[0].a + positive * dAtEnd
             case .smooth:
-                let positive = t - last + 1
-                return coefficients[controlPoints.count-2].f(t: positive)
+                let end = controlPoints.count - 1
+                let len0 = (controlPoints[end] - controlPoints[end-1])
+                let lambda = (t - controlPoints[end-1]) / len0
+                return coefficients[controlPoints.count-2].f(t: lambda)
             }
         }
         // find t_n where t_n <= t < t_n+1
