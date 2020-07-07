@@ -17,7 +17,8 @@ public struct Spline<P: DataPoint> {
     /// Create a cubic piece wise spline based on the provided input
     /// - Parameters:
     ///   - values: The control values the spline will intercept
-    ///   - arguments: optionally, the arguments at the control points t_0 .. t_n can be supplied, by default they are 0 ... n
+    ///   - arguments: optionally, the arguments at the control points t_0 .. t_n can be supplied,
+    ///    by default they are 0 ... n
     ///   - boundaryCondition: the chosen `BoundaryCondition`
     public init(
         values: [P],
