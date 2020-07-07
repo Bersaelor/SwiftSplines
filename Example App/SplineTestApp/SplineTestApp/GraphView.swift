@@ -40,7 +40,6 @@ class GraphView: UIView {
 
         guard let context = UIGraphicsGetCurrentContext() else { return }
         let size = bounds.size
-        print("Drawing Graph into size \(size)")
 
         draw(axis: axis, in: context, size: size)
         

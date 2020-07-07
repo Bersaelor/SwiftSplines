@@ -50,24 +50,38 @@ class DetailViewController: UIViewController {
     }
     
     private func updateSpline() {
-        // TODO add the 2D case
-        guard tappedPoints.count > 0 else { return }
-        let arguments = tappedPoints.map({ Double($0.x) })
-        let values = tappedPoints.map({ Double($0.y) })
-        
-        let function: (Double) -> Double
-        if arguments.count > 1 {
-            let spline = Spline(values: values, arguments: arguments)
-            function = spline.f(t:)
-        } else {
-            function = { _ in return values[0] }
+        switch detailItem {
+        case .simpleFunction:
+            guard tappedPoints.count > 0 else { return }
+            let arguments = tappedPoints.map({ Double($0.x) })
+            let values = tappedPoints.map({ Double($0.y) })
+            
+            let function: (Double) -> Double
+            if arguments.count > 1 {
+                let spline = Spline(values: values, arguments: arguments)
+                function = spline.f(t:)
+            } else {
+                function = { _ in return values[0] }
+            }
+            
+            let resolution = 5000
+            linePoints = (0 ..< resolution).map({ (offset) -> CGPoint in
+                let argument = Double(offset)/Double(resolution)
+                return CGPoint(x: argument, y: function(argument))
+            })
+        case .curve2D:
+            guard tappedPoints.count > 1 else {
+                linePoints = []
+                return
+            }
+            let spline = Spline(values: tappedPoints)
+            let resolution = 100
+            let length = tappedPoints.count
+            linePoints = (-resolution ..< (length + 1) * resolution).map { (offset) -> CGPoint in
+                let argument = CGFloat(offset)/CGFloat(resolution)
+                return spline.f(t: argument)
+            }
         }
-        
-        let resolution = 5000
-        linePoints = (0 ..< resolution).map({ (offset) -> CGPoint in
-            let argument = Double(offset)/Double(resolution)
-            return CGPoint(x: argument, y: function(argument))
-        })
     }
 
     @objc func handleTap(sender: UITapGestureRecognizer) {
