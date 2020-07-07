@@ -6,8 +6,10 @@ import PackageDescription
 let package = Package(
     name: "SwiftSplines",
     platforms: [
-        .iOS(SupportedPlatform.IOSVersion.v12),
-        .macOS(SupportedPlatform.MacOSVersion.v10_13)
+        .iOS(SupportedPlatform.IOSVersion.v11),
+        .macOS(SupportedPlatform.MacOSVersion.v10_13),
+        .tvOS(SupportedPlatform.TVOSVersion.v11),
+        .watchOS(SupportedPlatform.WatchOSVersion.v4)
     ],
     products: [
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
