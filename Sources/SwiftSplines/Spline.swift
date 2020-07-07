@@ -28,12 +28,12 @@ public struct Spline<P: DataPoint> {
         if let arguments = arguments, arguments.count != values.count {
             fatalError("Length of values and arguments arrays don't match, \(values.count) != \(arguments.count)")
         }
-        
+                
         let args = arguments ?? values.enumerated().map({ P.Scalar($0.0) })
         self.init(
             values: values,
             arguments: args,
-            derivatives: Self.computeDerivatives(from: values),
+            derivatives: Self.computeDerivatives(from: values, boundaryCondition: boundaryCondition),
             boundaryCondition: boundaryCondition
         )
     }
@@ -55,7 +55,14 @@ public struct Spline<P: DataPoint> {
             fatalError("Can't create piece wise spline with less then 2 control points")
         }
         self.controlPoints = arguments
-        self.coefficients = Self.computeCoefficients(from: values, d: derivatives)
+        var coefficients = Self.computeCoefficients(from: values, d: derivatives)
+        if case .circular = boundaryCondition, values.count > 1 {
+            coefficients.append(CubicPoly(
+                p0: values.last!, p1: values.first!,
+                d0: derivatives.last!, d1: derivatives.first!)
+            )
+        }
+        self.coefficients = coefficients
         self.boundary = boundaryCondition
     }
     
@@ -68,9 +75,13 @@ public struct Spline<P: DataPoint> {
             switch boundary {
             case .circular:
                 let negative = controlPoints[0] - t
-                let factor = ceil(negative/length)
-                let tNew = t + factor * length
-                return f(t: tNew)
+                if negative <= 1 {
+                    return coefficients[controlPoints.count-1].f(t: 1 - negative)
+                } else {
+                    let factor = ceil(negative/length)
+                    let tNew = t + factor * length
+                    return f(t: tNew)
+                }
             case .fixedTangentials(let dAtStart, _):
                 let negative = controlPoints[0] - t
                 return coefficients[0].a + (negative * dAtStart)
@@ -91,9 +102,13 @@ public struct Spline<P: DataPoint> {
             switch boundary {
             case .circular:
                 let positive = t - last
-                let factor = ceil(positive/length)
-                let tNew = t - factor * length
-                return f(t: tNew)
+                if positive <= 1 {
+                    return coefficients[controlPoints.count-1].f(t: positive)
+                } else {
+                    let factor = ceil(positive/length)
+                    let tNew = t - factor * length
+                    return f(t: tNew)
+                }
             case .fixedTangentials(_, let dAtEnd):
                 let value = coefficients[coefficients.count - 1].f(t: 1)
                 let positive = t - last
@@ -128,6 +143,13 @@ public struct Spline<P: DataPoint> {
     }
     
     struct CubicPoly {
+        init(p0: P, p1: P, d0: P, d1: P) {
+            self.a = p0
+            self.b = d0
+            self.c = 3*(p1 - p0) - 2*d0 - d1
+            self.d = 2*(p0 - p1) + d0 + d1
+        }
+        
         let a, b, c, d: P
     }
 }

@@ -10,12 +10,7 @@ extension Spline {
             let p1 = points[index.advanced(by: 1)]
             let d0 = d[index]
             let d1 = d[index.advanced(by: 1)]
-            return CubicPoly(
-                a: p0,
-                b: d0,
-                c: 3*(p1 - p0) - 2*d0 - d1,
-                d: 2*(p0 - p1) + d0 + d1
-            )
+            return CubicPoly(p0: p0, p1: p1, d0: d0, d1: d1)
         }
     }
     
@@ -31,7 +26,6 @@ extension Spline {
         } else {
             matrixCreator = withSmoothEndsTridiagonalMatrix
         }
-        
         
         matrixCreator(Int32(points.count)) { matrix in
             for dimension in 0 ..< P.scalarCount {

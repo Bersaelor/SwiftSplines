@@ -94,13 +94,12 @@ class DetailViewController: UIViewController {
                 linePoints = []
                 return
             }
-            let points = chosenOption == 0 ? tappedPoints : tappedPoints + [tappedPoints[0]]
             let spline = Spline(
-                values: points,
+                values: tappedPoints,
                 boundaryCondition: chosenOption == 0 ? .smooth : .circular
             )
             let resolution = 100
-            let length = points.count
+            let length = tappedPoints.count
             linePoints = (-resolution ..< (length + 1) * resolution).map { (offset) -> CGPoint in
                 let argument = CGFloat(offset)/CGFloat(resolution)
                 return spline.f(t: argument)
