@@ -31,16 +31,29 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="7wo-hp-gbs">
+                                <rect key="frame" x="20" y="92" width="374" height="32"/>
+                                <segments>
+                                    <segment title="First"/>
+                                    <segment title="Second"/>
+                                </segments>
+                                <connections>
+                                    <action selector="optionChanged:" destination="JEX-9P-axG" eventType="valueChanged" id="kHK-Vk-MdN"/>
+                                </connections>
+                            </segmentedControl>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="f71-ap-3Uk" customClass="GraphView" customModule="SplineTestApp" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="88" width="414" height="774"/>
+                                <rect key="frame" x="0.0" y="123" width="414" height="739"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                             </view>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
-                            <constraint firstItem="f71-ap-3Uk" firstAttribute="top" secondItem="VUw-jc-0yf" secondAttribute="top" id="49d-CR-gDC"/>
+                            <constraint firstItem="7wo-hp-gbs" firstAttribute="leading" secondItem="svH-Pt-448" secondAttribute="leadingMargin" id="3w6-Yb-wzZ"/>
                             <constraint firstItem="f71-ap-3Uk" firstAttribute="leading" secondItem="VUw-jc-0yf" secondAttribute="leading" id="4jJ-gF-Rkw"/>
+                            <constraint firstItem="f71-ap-3Uk" firstAttribute="top" secondItem="7wo-hp-gbs" secondAttribute="bottom" id="EBf-Uu-AI6"/>
                             <constraint firstItem="VUw-jc-0yf" firstAttribute="trailing" secondItem="f71-ap-3Uk" secondAttribute="trailing" id="HC5-fe-4mh"/>
+                            <constraint firstItem="7wo-hp-gbs" firstAttribute="top" secondItem="VUw-jc-0yf" secondAttribute="top" constant="4" id="LP3-zl-Lil"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="7wo-hp-gbs" secondAttribute="trailing" id="iWz-Bv-P8g"/>
                             <constraint firstItem="VUw-jc-0yf" firstAttribute="bottom" secondItem="f71-ap-3Uk" secondAttribute="bottom" id="kAd-c9-gHP"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="VUw-jc-0yf"/>
@@ -49,6 +62,7 @@
                     <navigationItem key="navigationItem" title="Detail" id="mOI-FS-AaM"/>
                     <connections>
                         <outlet property="graphView" destination="f71-ap-3Uk" id="DJ2-ek-5Ye"/>
+                        <outlet property="optionsBar" destination="7wo-hp-gbs" id="q48-f7-hgV"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FJe-Yq-33r" sceneMemberID="firstResponder"/>

@@ -62,12 +62,12 @@ public struct Spline<P: DataPoint> {
     /// - Parameter t: the argument provided
     /// - Returns: The interpolation calculated by finding the cubic spline segment and then calculating the cubic function of scaled t
     public func f(t: P.Scalar) -> P {
-        guard t > controlPoints[0] else {
+        guard t >= controlPoints[0] else {
             // extend constant function to the left
             switch boundary {
             case .circular:
                 let negative = controlPoints[0] - t
-                let factor = ceil(-negative/length)
+                let factor = ceil(negative/length)
                 let tNew = t + factor * length
                 return f(t: tNew)
             case .fixedTangentials(let dAtStart, _):
@@ -81,6 +81,9 @@ public struct Spline<P: DataPoint> {
         }
 
         guard let last = controlPoints.last else { return coefficients[0].a }
+        guard t != last else {
+            return coefficients.last!.f(t: 1)
+        }
         guard t < last else {
             // extend constant function to the right
             // extend constant function to the left
@@ -91,8 +94,9 @@ public struct Spline<P: DataPoint> {
                 let tNew = t - factor * length
                 return f(t: tNew)
             case .fixedTangentials(_, let dAtEnd):
+                let value = coefficients[coefficients.count - 1].f(t: 1)
                 let positive = t - last
-                return coefficients[0].a + positive * dAtEnd
+                return value + positive * dAtEnd
             case .smooth:
                 let end = controlPoints.count - 1
                 let len0 = (controlPoints[end] - controlPoints[end-1])
@@ -100,12 +104,13 @@ public struct Spline<P: DataPoint> {
                 return coefficients[controlPoints.count-2].f(t: lambda)
             }
         }
+        
         // find t_n where t_n <= t < t_n+1
         let index = controlPoints.enumerated().first(where: { (offset, element) -> Bool in
-            return element <= t && t < controlPoints[offset+1]
-            })!.offset
+            return element <= t && offset + 1 < controlPoints.count && t < controlPoints[offset+1]
+        })?.offset ?? controlPoints.count - 1
         let lambda = (t - controlPoints[index])
-            / (controlPoints[index.advanced(by: 1)] - controlPoints[index])
+            / (controlPoints[index + 1] - controlPoints[index])
 
         return coefficients[index].f(t: lambda)
     }

@@ -12,8 +12,15 @@ import UIKit
 class DetailViewController: UIViewController {
 
     @IBOutlet weak var graphView: GraphView!
+    @IBOutlet weak var optionsBar: UISegmentedControl!
     
     var detailItem: Example = .simpleFunction
+    
+    private var chosenOption: Int = 0 {
+        didSet {
+            if oldValue != chosenOption { updateSpline() }
+        }
+    }
     
     private var tappedPoints: [CGPoint] = [] {
         didSet {
@@ -46,7 +53,15 @@ class DetailViewController: UIViewController {
         title = detailItem.displayName
 
         graphView.axis = detailItem.axis
-
+        optionsBar.removeAllSegments()
+        for value in detailItem.options.enumerated() {
+            optionsBar.insertSegment(
+                withTitle: value.element,
+                at: value.offset,
+                animated: false
+            )
+        }
+        optionsBar.selectedSegmentIndex = chosenOption
     }
     
     private func updateSpline() {
@@ -58,7 +73,12 @@ class DetailViewController: UIViewController {
             
             let function: (Double) -> Double
             if arguments.count > 1 {
-                let spline = Spline(values: values, arguments: arguments)
+                let spline = Spline(
+                    values: values,
+                    arguments: arguments,
+                    boundaryCondition: chosenOption == 0
+                        ? .smooth : .fixedTangentials(dAtStart: 0, dAtEnd: 0)
+                )
                 function = spline.f(t:)
             } else {
                 function = { _ in return values[0] }
@@ -74,9 +94,13 @@ class DetailViewController: UIViewController {
                 linePoints = []
                 return
             }
-            let spline = Spline(values: tappedPoints)
+            let points = chosenOption == 0 ? tappedPoints : tappedPoints + [tappedPoints[0]]
+            let spline = Spline(
+                values: points,
+                boundaryCondition: chosenOption == 0 ? .smooth : .circular
+            )
             let resolution = 100
-            let length = tappedPoints.count
+            let length = points.count
             linePoints = (-resolution ..< (length + 1) * resolution).map { (offset) -> CGPoint in
                 let argument = CGFloat(offset)/CGFloat(resolution)
                 return spline.f(t: argument)
@@ -108,5 +132,10 @@ class DetailViewController: UIViewController {
             tappedPoints.append(newPoint)
         }
     }
+    
+    @IBAction func optionChanged(_ sender: UISegmentedControl) {
+        chosenOption = sender.selectedSegmentIndex
+    }
+    
 }
 

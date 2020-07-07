@@ -40,4 +40,13 @@ extension Example {
             return "p_\(index)"
         }
     }
+    
+    var options: [String] {
+        switch self {
+        case .simpleFunction:
+            return ["Smooth Ends", "Linear Ends"]
+        case .curve2D:
+            return ["Smooth Ends", "Circular"]
+        }
+    }
 }
