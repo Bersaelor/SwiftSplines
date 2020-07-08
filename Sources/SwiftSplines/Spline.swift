@@ -54,6 +54,9 @@ public struct Spline<P: DataPoint> {
         guard values.count >= 2 else {
             fatalError("Can't create piece wise spline with less then 2 control points")
         }
+        
+        print("derivatives: \(derivatives)")
+        
         self.controlPoints = arguments
         var coefficients = Self.computeCoefficients(from: values, d: derivatives)
         if case .circular = boundaryCondition, values.count > 1 {
