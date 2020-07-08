@@ -42,15 +42,26 @@ The math for the splines is detailed on [wolfram alpha](https://mathworld.wolfra
 
 The [Swift Package Manager](https://swift.org/package-manager/) is a tool for automating the distribution of Swift code and is now available for all Apple platforms.
 
+Just open `Add package dependency` in Xcode:
+![Xcode menu](/.meta/xcode.jpg?raw=true)
 
+and enter the following url 
+```
+https://github.com/Bersaelor/SwiftSplines.git
+```
 
-For SPM packages you can add `SwiftSplines`  as `dependencies` value of your `Package.swift`.
+You can also manually the SPM package.swift file and add `SwiftSplines`  as `dependencies` value of your `Package.swift`.
 
 ```swift
 dependencies: [
     .package(url: "https://github.com/Bersaelor/SwiftSplines.git", .upToNextMajor(from: "0.1.0"))
 ]
 ```
+
+### Carthage/Cocoapods etc
+
+Since the [swift package manager](https://swift.org/package-manager/) is now mature, older package managers are no longer supported.
+
 
 ## Usage
 
