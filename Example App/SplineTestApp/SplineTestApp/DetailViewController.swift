@@ -90,7 +90,7 @@ class DetailViewController: UIViewController {
                 return CGPoint(x: argument, y: function(argument))
             })
         case .curve2D:
-            guard tappedPoints.count > 1 else {
+            guard tappedPoints.count > 2 else {
                 linePoints = []
                 return
             }
@@ -100,7 +100,7 @@ class DetailViewController: UIViewController {
             )
             let resolution = 100
             let length = tappedPoints.count
-            linePoints = (-resolution ..< (length + 1) * resolution).map { (offset) -> CGPoint in
+            linePoints = (-resolution ..< length * resolution).map { (offset) -> CGPoint in
                 let argument = CGFloat(offset)/CGFloat(resolution)
                 return spline.f(t: argument)
             }

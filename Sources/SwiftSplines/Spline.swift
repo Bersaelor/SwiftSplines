@@ -71,7 +71,6 @@ public struct Spline<P: DataPoint> {
     /// - Returns: The interpolation calculated by finding the cubic spline segment and then calculating the cubic function of scaled t
     public func f(t: P.Scalar) -> P {
         guard t >= controlPoints[0] else {
-            // extend constant function to the left
             switch boundary {
             case .circular:
                 let negative = controlPoints[0] - t
@@ -83,6 +82,7 @@ public struct Spline<P: DataPoint> {
                     return f(t: tNew)
                 }
             case .fixedTangentials(let dAtStart, _):
+                // extend linear function to the left
                 let negative = controlPoints[0] - t
                 return coefficients[0].a + (negative * dAtStart)
             case .smooth:
@@ -94,7 +94,12 @@ public struct Spline<P: DataPoint> {
 
         guard let last = controlPoints.last else { return coefficients[0].a }
         guard t != last else {
-            return coefficients.last!.f(t: 1)
+            switch boundary {
+            case .circular:
+                return coefficients.last!.f(t: 0)
+            default:
+                return coefficients.last!.f(t: 1)
+            }
         }
         guard t < last else {
             // extend constant function to the right
