@@ -43,7 +43,7 @@ The math for the splines is detailed on [wolfram alpha](https://mathworld.wolfra
 The [Swift Package Manager](https://swift.org/package-manager/) is a tool for automating the distribution of Swift code and is now available for all Apple platforms.
 
 Just open `Add package dependency` in Xcode:
-![Xcode menu](/.meta/xcode.jpg?raw=true | width=200)
+<img src="https://github.com/Bersaelor/SwiftSplines/raw/master/.meta/xcode.jpg?raw=true" width="200">
 
 and enter the following url 
 ```
