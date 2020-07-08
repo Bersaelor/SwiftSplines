@@ -89,3 +89,7 @@ func calculate(t: Double) -> CGPoint {
 - calculate some moving object's positions between fixed control points 
 - interpolate given values smoothly
 - originally created because we needed a function that starts at a constant value above 0, then approaches `y(x) = x` around 1 and then peters out towards 2. In that case the application was an `ARKit` app where we wanted to smoothly filter the incoming light estimation
+
+## License
+
+SwiftSplines is released under the MIT license. [See LICENSE](https://github.com/Bersaelor/SwiftSplines/blob/master/LICENSE) for details.
