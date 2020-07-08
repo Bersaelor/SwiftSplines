@@ -20,7 +20,8 @@ Simple function (1D):
 - [x] Written for generic image space, called `DataPoint`, which can be `float`, `double`, `CGPoint` or vectors of arbitrary dimension
 - [x] Matrix calculation to get the derivatives at the control points uses [Accelerate](https://developer.apple.com/documentation/accelerate)'s sparse matrix solvers, so built for speed on all platforms that support `Accelerate`
 - [x] Offers smooth, fixed ends or circular boundary conditions
-- [ ] So far 
+- [ ] use `Double`/`Float` accelerate functions depending on intput data. So far scalars are converted to `Double`, 
+- [ ] offer polynomials of different degrees, not just Cubic Splines 
 
 ## Requirements
 
