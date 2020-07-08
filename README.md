@@ -52,7 +52,7 @@ and enter the following url
 https://github.com/Bersaelor/SwiftSplines.git
 ```
 
-You can also manually the SPM package.swift file and add `SwiftSplines`  as `dependencies` value of your `Package.swift`.
+You can also manually edit the SPM `Package.swift` and add `SwiftSplines`  as `dependencies` value of your `Package.swift`.
 
 ```swift
 dependencies: [
