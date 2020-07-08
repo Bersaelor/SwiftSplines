@@ -5,10 +5,11 @@ import Foundation
 struct SparseMatrix {
 
     let size: Int32
+    let isSymmetric: Bool
     let columnStarts: [Int]
     let rowIndices: [Int32]
     let values: [Double]
-
+    
     func use(calculate: (SparseMatrix_Double) -> Void) {
         var columnStarts = self.columnStarts
         var rowIndices = self.rowIndices
@@ -23,13 +24,7 @@ struct SparseMatrix {
                             columnCount: size,
                             columnStarts: columPtr.baseAddress!,
                             rowIndices: rowIndicesPtr.baseAddress!,
-                            attributes: SparseAttributes_t(
-                                transpose: false,
-                                triangle: SparseLowerTriangle,
-                                kind: SparseSymmetric,
-                                _reserved: 0,
-                                _allocatedBySparse: false
-                            ),
+                            attributes: sparseAttributes,
                             blockSize: 1
                         ),
                         data: valuesPtr.baseAddress!)
@@ -38,6 +33,67 @@ struct SparseMatrix {
             }
         }
     }
+    
+    private var sparseAttributes: SparseAttributes_t {
+        if isSymmetric {
+            return SparseAttributes_t(
+                transpose: false,
+                triangle: SparseLowerTriangle,
+                kind: SparseSymmetric,
+                _reserved: 0,
+                _allocatedBySparse: false
+            )
+        } else {
+            return SparseAttributes_t()
+        }
+    }
+    
+    /// Only for debug purposes, don't use this method in production
+    func createDense() -> [[Double]] {
+        var result = (0 ..< size).map { (row) -> [Double] in
+            return Array(repeating: Double(0), count: Int(size))
+        }
+        
+        var currentColumn = 0
+        for pair in values.enumerated() {
+            let row = rowIndices[pair.offset]
+            
+            if pair.offset >= columnStarts[currentColumn+1] {
+                currentColumn += 1
+            }
+            guard row < size && currentColumn < size else {
+                print("Warning: (\(row),\(currentColumn) is not in \(size)x\(size)")
+                continue
+            }
+            result[Int(row)][currentColumn] = pair.element
+        }
+        
+        return result
+    }
+}
+
+extension SparseMatrix : CustomDebugStringConvertible {
+    
+    var debugDescription: String {
+        var result = String(repeating: "▁▁", count: Int(size)) + "\n"
+        
+        let denseMatrix = createDense()
+        
+        let formatter = NumberFormatter()
+        formatter.maximumFractionDigits = 3
+        
+        for row in (0 ..< size) {
+            let entries = denseMatrix[Int(row)].map { formatter.string(for: $0) ?? "?"}
+            let rowString = entries.joined(separator: " ")
+            result.append(rowString + "\n")
+            
+        }
+        
+        result.append(String(repeating: "▔▔", count: Int(size)) + "\n")
+
+        return result
+    }
+
 }
 
 extension SparseMatrix {
@@ -72,6 +128,7 @@ extension SparseMatrix {
         
         return SparseMatrix(
             size: size,
+            isSymmetric: true,
             columnStarts: columnStarts,
             rowIndices: rowIndices,
             values: values
@@ -108,6 +165,7 @@ extension SparseMatrix {
         
         return SparseMatrix(
             size: size,
+            isSymmetric: true,
             columnStarts: columnStarts,
             rowIndices: rowIndices,
             values: values
@@ -131,7 +189,7 @@ extension SparseMatrix {
                 values.append(contentsOf:     [4, 1])
                 rowIndices.append(contentsOf: [1, 2])
             case size-2 where size > 3:
-                values.append(contentsOf:     [4, 0])
+                values.append(contentsOf:     [1, 4])
                 rowIndices.append(contentsOf: [column-1, column])
             case size-1:
                 values.append(contentsOf:     [1, 1])
@@ -145,11 +203,10 @@ extension SparseMatrix {
         
         return SparseMatrix(
             size: size,
+            isSymmetric: false,
             columnStarts: columnStarts,
             rowIndices: rowIndices,
             values: values
         )
     }
 }
-
-

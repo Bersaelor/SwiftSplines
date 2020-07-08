@@ -21,7 +21,7 @@ extension Spline {
         var result = points
         var xValues: [Double] = Array(repeating: 0, count: points.count)
         let matrix = boundaryCondition.matrix(of: Int32(points.count))
-        
+
         matrix.use { (matrix) in
             for dimension in 0 ..< P.scalarCount {
                 xValues.withUnsafeMutableBufferPointer { xValuesPtr in
@@ -34,6 +34,7 @@ extension Spline {
                         boundaryCondition: boundaryCondition,
                         dimension: dimension
                     )
+                    
                     rightHandSide.use { (rhs) in
                         let status = SparseSolve(
                             SparseConjugateGradient(),
