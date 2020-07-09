@@ -128,7 +128,9 @@ class DetailViewController: UIViewController {
         let location = sender.location(in: graphView)
         guard graphView.frame.contains(location) else { return }
         let size = graphView.bounds.size
-        let newPoint = CGPoint(x: location.x / size.width, y: location.y / size.height)
+        // natural coordinate system goes up, iOS coo system goes down
+        // so invert y
+        let newPoint = CGPoint(x: location.x / size.width, y: 1 - location.y / size.height)
         
         switch detailItem {
         case .simpleFunction:

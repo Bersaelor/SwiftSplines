@@ -66,9 +66,11 @@ class GraphView: UIView {
             height: size.height - 2 * border
         )
         let scaledPoints = linePoints.map {
+            // natural coordinate system goes up, iOS coo system goes down
+            // so invert y
             return CGPoint(
                 x: border + $0.x * cooSize.width,
-                y: border + $0.y * cooSize.height)
+                y: border + (1 - $0.y) * cooSize.height)
         }
         drawLine(points: scaledPoints, in: context)
     }
@@ -127,9 +129,11 @@ class GraphView: UIView {
         ]
         
         for point in points {
+            // natural coordinate system goes up, iOS coo system goes down
+            // so invert y
             let origin = CGPoint(
                 x: point.1.x * size.width - radius,
-                y: point.1.y * size.height - radius
+                y: (1 - point.1.y) * size.height - radius
             )
             
             let ellipse = CGRect(
