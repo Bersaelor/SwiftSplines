@@ -71,8 +71,31 @@ Import the package in your *.swift file:
 ```swift
 import SwiftSplines
 ```
+### Example A : Dampening a signal
 
-Make sure your data values conforom to 
+If you want a function that dampens a signal in the range of [0,3], like
+```
+f(0.1) = 0.3,
+f(0.4) = 0.6,
+f(1) = 1,
+f(2) = 1.6
+f(2.5) = 2
+f'(0.1) = 0
+f'(2.5) = 0
+```
+you could define:
+```swift
+// private let dampingFunction: (Double) -> Double
+private let dampingFunction = Spline(
+    arguments: [0.1, 0.4, 1, 2,   2.5],
+    values:    [0.3, 0.6, 1, 1.6, 2],
+    boundaryCondition: .fixedTangentials(dAtStart: 0, dAtEnd: 0.0)
+).f
+```
+
+### Example B: Connect custom vector data
+
+Make sure your data values conform to 
 ```swift
 public protocol DataPoint {
     associatedtype Scalar: FloatingPoint & DoubleConvertable
@@ -83,16 +106,18 @@ public protocol DataPoint {
     static func * (left: Scalar, right: Self) -> Self
     static func + (left: Self, right: Self) -> Self
 }
+
+extension MyVector: DataPoint { ... }
 ```
 (`Float`, `CGFloat`, `Double`, `CGPoint` conform to DataPoint as part of the package)
 
 Then you can create your spline functions by:
 ```swift
-let values: [CGPoint] = ...
+let values: [MyVector] = ...
 
 let spline = Spline(values: values)
 
-func calculate(t: Double) -> CGPoint {
+func calculate(t: Double) -> MyVector {
     return spline.f(t: t)
 }
 ```

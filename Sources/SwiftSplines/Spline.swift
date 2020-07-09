@@ -40,8 +40,8 @@ public struct Spline<P: DataPoint> {
     ///    by default they are 0 ... n
     ///   - boundaryCondition: the chosen `BoundaryCondition`
     public init(
-        values: [P],
         arguments: [P.Scalar]? = nil,
+        values: [P],
         boundaryCondition: BoundaryCondition = .smooth
     ) {
         if let arguments = arguments, arguments.count != values.count {
@@ -50,8 +50,8 @@ public struct Spline<P: DataPoint> {
                 
         let args = arguments ?? values.enumerated().map({ P.Scalar($0.0) })
         self.init(
-            values: values,
             arguments: args,
+            values: values,
             derivatives: Self.computeDerivatives(from: values, boundaryCondition: boundaryCondition),
             boundaryCondition: boundaryCondition
         )
@@ -62,8 +62,8 @@ public struct Spline<P: DataPoint> {
     /// - Parameter points: the control points
     /// - Parameter derivatives: f'(t) at the control points
     public init(
-        values: [P],
         arguments: [P.Scalar],
+        values: [P],
         derivatives: [P],
         boundaryCondition: BoundaryCondition = .smooth
     ) {

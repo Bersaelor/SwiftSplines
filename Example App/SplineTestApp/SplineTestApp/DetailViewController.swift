@@ -90,8 +90,8 @@ class DetailViewController: UIViewController {
             let function: (Double) -> Double
             if arguments.count > 1 {
                 let spline = Spline(
-                    values: values,
                     arguments: arguments,
+                    values: values,
                     boundaryCondition: chosenOption == 0
                         ? .smooth : .fixedTangentials(dAtStart: 0, dAtEnd: 0)
                 )
