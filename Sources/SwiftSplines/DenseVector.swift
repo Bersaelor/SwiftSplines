@@ -38,6 +38,10 @@ struct DenseVector {
 
 extension DenseVector {
     
+    var isZero: Bool {
+        return !values.contains(where: { abs($0) > 10 * Double.ulpOfOne })
+    }
+    
     static func cubicSpline<P: DataPoint>(
         points: [P.Scalar],
         boundaryCondition: Spline<P>.BoundaryCondition,
