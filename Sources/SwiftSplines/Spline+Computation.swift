@@ -40,18 +40,21 @@ extension Spline {
         var result = points
         var xValues: [Double] = Array(repeating: 0, count: points.count)
         let matrix = boundaryCondition.matrix(of: Int32(points.count))
-
+        
         matrix.use { (matrix) in
             for dimension in 0 ..< P.scalarCount {
                 xValues.withUnsafeMutableBufferPointer { xValuesPtr in
-                    let x = DenseVector_Double(
-                        count: Int32(points.count),
-                        data: xValuesPtr.baseAddress!
-                    )
                     let rightHandSide = DenseVector.cubicSpline(
                         points: points.map { $0[dimension] },
                         boundaryCondition: boundaryCondition,
                         dimension: dimension
+                    )
+                    
+                    guard !rightHandSide.isZero else { return }
+                    
+                    let x = DenseVector_Double(
+                        count: Int32(points.count),
+                        data: xValuesPtr.baseAddress!
                     )
                     
                     rightHandSide.use { (rhs) in

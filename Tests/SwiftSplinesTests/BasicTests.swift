@@ -1,12 +1,12 @@
 import XCTest
 @testable import SwiftSplines
 
-final class SwiftSplinesTests: XCTestCase {
+final class BasicTests: XCTestCase {
     func testLine() {
         let points: [Double] = [0, 1, 2, 3, 4, 5]
         let derivatives: [Double] = Array(repeating: 1, count: points.count)
         let arguments = points.enumerated().map({ Double($0.0) })
-        let spline = Spline(values: points, arguments: arguments, derivatives: derivatives)
+        let spline = Spline(arguments: arguments, values: points, derivatives: derivatives)
         
         for value in points.enumerated() {
             let t = Double(value.offset)
@@ -55,7 +55,7 @@ final class SwiftSplinesTests: XCTestCase {
     func testUnequallySpacedArguments() {
         let values: [Double] = [0,  -1,   2,  -3, 4, -5]
         let args: [Double]   = [0, 0.1, 0.5, 1.5, 3, 10]
-        let spline = Spline(values: values, arguments: args)
+        let spline = Spline(arguments: args, values: values)
 
         for value in args.enumerated() {
             let t = Double(value.element)
