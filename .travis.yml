@@ -1,0 +1,6 @@
+language: objective-c
+os: osx
+osx_image: xcode12.2
+script:
+  - swift build
+  - swift test
